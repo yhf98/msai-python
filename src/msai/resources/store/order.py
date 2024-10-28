@@ -26,7 +26,7 @@ class OrderResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return the
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/msai-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/yhf98/msai-python#accessing-raw-response-data-eg-headers
         """
         return OrderResourceWithRawResponse(self)
 
@@ -35,7 +35,7 @@ class OrderResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/msai-python#with_streaming_response
+        For more information, see https://www.github.com/yhf98/msai-python#with_streaming_response
         """
         return OrderResourceWithStreamingResponse(self)
 
@@ -114,7 +114,7 @@ class AsyncOrderResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return the
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/msai-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/yhf98/msai-python#accessing-raw-response-data-eg-headers
         """
         return AsyncOrderResourceWithRawResponse(self)
 
@@ -123,7 +123,7 @@ class AsyncOrderResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/msai-python#with_streaming_response
+        For more information, see https://www.github.com/yhf98/msai-python#with_streaming_response
         """
         return AsyncOrderResourceWithStreamingResponse(self)
 
