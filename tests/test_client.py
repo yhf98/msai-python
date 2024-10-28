@@ -17,11 +17,11 @@ import pytest
 from respx import MockRouter
 from pydantic import ValidationError
 
-from msai import Petstore, AsyncPetstore, APIResponseValidationError
+from msai import Msai, AsyncMsai, APIResponseValidationError
 from msai._types import Omit
 from msai._models import BaseModel, FinalRequestOptions
 from msai._constants import RAW_RESPONSE_HEADER
-from msai._exceptions import PetstoreError, APIStatusError, APITimeoutError, APIResponseValidationError
+from msai._exceptions import MsaiError, APIStatusError, APITimeoutError, APIResponseValidationError
 from msai._base_client import DEFAULT_TIMEOUT, HTTPX_DEFAULT_TIMEOUT, BaseClient, make_request_options
 
 from .utils import update_env
@@ -40,7 +40,7 @@ def _low_retry_timeout(*_args: Any, **_kwargs: Any) -> float:
     return 0.1
 
 
-def _get_open_connections(client: Petstore | AsyncPetstore) -> int:
+def _get_open_connections(client: Msai | AsyncMsai) -> int:
     transport = client._client._transport
     assert isinstance(transport, httpx.HTTPTransport) or isinstance(transport, httpx.AsyncHTTPTransport)
 
@@ -48,8 +48,8 @@ def _get_open_connections(client: Petstore | AsyncPetstore) -> int:
     return len(pool._requests)
 
 
-class TestPetstore:
-    client = Petstore(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+class TestMsai:
+    client = Msai(base_url=base_url, api_key=api_key, _strict_response_validation=True)
 
     @pytest.mark.respx(base_url=base_url)
     def test_raw_response(self, respx_mock: MockRouter) -> None:
@@ -96,7 +96,7 @@ class TestPetstore:
         assert isinstance(self.client.timeout, httpx.Timeout)
 
     def test_copy_default_headers(self) -> None:
-        client = Petstore(
+        client = Msai(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, default_headers={"X-Foo": "bar"}
         )
         assert client.default_headers["X-Foo"] == "bar"
@@ -130,7 +130,7 @@ class TestPetstore:
             client.copy(set_default_headers={}, default_headers={"X-Foo": "Bar"})
 
     def test_copy_default_query(self) -> None:
-        client = Petstore(
+        client = Msai(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, default_query={"foo": "bar"}
         )
         assert _get_params(client)["foo"] == "bar"
@@ -255,9 +255,7 @@ class TestPetstore:
         assert timeout == httpx.Timeout(100.0)
 
     def test_client_timeout_option(self) -> None:
-        client = Petstore(
-            base_url=base_url, api_key=api_key, _strict_response_validation=True, timeout=httpx.Timeout(0)
-        )
+        client = Msai(base_url=base_url, api_key=api_key, _strict_response_validation=True, timeout=httpx.Timeout(0))
 
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
@@ -266,9 +264,7 @@ class TestPetstore:
     def test_http_client_timeout_option(self) -> None:
         # custom timeout given to the httpx client should be used
         with httpx.Client(timeout=None) as http_client:
-            client = Petstore(
-                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
-            )
+            client = Msai(base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client)
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
             timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
@@ -276,9 +272,7 @@ class TestPetstore:
 
         # no timeout given to the httpx client should not use the httpx default
         with httpx.Client() as http_client:
-            client = Petstore(
-                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
-            )
+            client = Msai(base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client)
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
             timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
@@ -286,9 +280,7 @@ class TestPetstore:
 
         # explicitly passing the default timeout currently results in it being ignored
         with httpx.Client(timeout=HTTPX_DEFAULT_TIMEOUT) as http_client:
-            client = Petstore(
-                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
-            )
+            client = Msai(base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client)
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
             timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
@@ -297,7 +289,7 @@ class TestPetstore:
     async def test_invalid_http_client(self) -> None:
         with pytest.raises(TypeError, match="Invalid `http_client` arg"):
             async with httpx.AsyncClient() as http_client:
-                Petstore(
+                Msai(
                     base_url=base_url,
                     api_key=api_key,
                     _strict_response_validation=True,
@@ -305,14 +297,14 @@ class TestPetstore:
                 )
 
     def test_default_headers_option(self) -> None:
-        client = Petstore(
+        client = Msai(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, default_headers={"X-Foo": "bar"}
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-foo") == "bar"
         assert request.headers.get("x-stainless-lang") == "python"
 
-        client2 = Petstore(
+        client2 = Msai(
             base_url=base_url,
             api_key=api_key,
             _strict_response_validation=True,
@@ -326,17 +318,17 @@ class TestPetstore:
         assert request.headers.get("x-stainless-lang") == "my-overriding-header"
 
     def test_validate_headers(self) -> None:
-        client = Petstore(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        client = Msai(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("api_key") == api_key
 
-        with pytest.raises(PetstoreError):
-            with update_env(**{"PETSTORE_API_KEY": Omit()}):
-                client2 = Petstore(base_url=base_url, api_key=None, _strict_response_validation=True)
+        with pytest.raises(MsaiError):
+            with update_env(**{"MSAI_API_KEY": Omit()}):
+                client2 = Msai(base_url=base_url, api_key=None, _strict_response_validation=True)
             _ = client2
 
     def test_default_query_option(self) -> None:
-        client = Petstore(
+        client = Msai(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, default_query={"query_param": "bar"}
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
@@ -450,7 +442,7 @@ class TestPetstore:
         params = dict(request.url.params)
         assert params == {"foo": "2"}
 
-    def test_multipart_repeating_array(self, client: Petstore) -> None:
+    def test_multipart_repeating_array(self, client: Msai) -> None:
         request = client._build_request(
             FinalRequestOptions.construct(
                 method="get",
@@ -537,7 +529,7 @@ class TestPetstore:
         assert response.foo == 2
 
     def test_base_url_setter(self) -> None:
-        client = Petstore(base_url="https://example.com/from_init", api_key=api_key, _strict_response_validation=True)
+        client = Msai(base_url="https://example.com/from_init", api_key=api_key, _strict_response_validation=True)
         assert client.base_url == "https://example.com/from_init/"
 
         client.base_url = "https://example.com/from_setter"  # type: ignore[assignment]
@@ -545,15 +537,15 @@ class TestPetstore:
         assert client.base_url == "https://example.com/from_setter/"
 
     def test_base_url_env(self) -> None:
-        with update_env(PETSTORE_BASE_URL="http://localhost:5000/from/env"):
-            client = Petstore(api_key=api_key, _strict_response_validation=True)
+        with update_env(MSAI_BASE_URL="http://localhost:5000/from/env"):
+            client = Msai(api_key=api_key, _strict_response_validation=True)
             assert client.base_url == "http://localhost:5000/from/env/"
 
     @pytest.mark.parametrize(
         "client",
         [
-            Petstore(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
-            Petstore(
+            Msai(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
+            Msai(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 _strict_response_validation=True,
@@ -562,7 +554,7 @@ class TestPetstore:
         ],
         ids=["standard", "custom http client"],
     )
-    def test_base_url_trailing_slash(self, client: Petstore) -> None:
+    def test_base_url_trailing_slash(self, client: Msai) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -575,8 +567,8 @@ class TestPetstore:
     @pytest.mark.parametrize(
         "client",
         [
-            Petstore(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
-            Petstore(
+            Msai(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
+            Msai(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 _strict_response_validation=True,
@@ -585,7 +577,7 @@ class TestPetstore:
         ],
         ids=["standard", "custom http client"],
     )
-    def test_base_url_no_trailing_slash(self, client: Petstore) -> None:
+    def test_base_url_no_trailing_slash(self, client: Msai) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -598,8 +590,8 @@ class TestPetstore:
     @pytest.mark.parametrize(
         "client",
         [
-            Petstore(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
-            Petstore(
+            Msai(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
+            Msai(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 _strict_response_validation=True,
@@ -608,7 +600,7 @@ class TestPetstore:
         ],
         ids=["standard", "custom http client"],
     )
-    def test_absolute_request_url(self, client: Petstore) -> None:
+    def test_absolute_request_url(self, client: Msai) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -619,7 +611,7 @@ class TestPetstore:
         assert request.url == "https://myapi.com/foo"
 
     def test_copied_client_does_not_close_http(self) -> None:
-        client = Petstore(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        client = Msai(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         assert not client.is_closed()
 
         copied = client.copy()
@@ -630,7 +622,7 @@ class TestPetstore:
         assert not client.is_closed()
 
     def test_client_context_manager(self) -> None:
-        client = Petstore(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        client = Msai(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         with client as c2:
             assert c2 is client
             assert not c2.is_closed()
@@ -651,7 +643,7 @@ class TestPetstore:
 
     def test_client_max_retries_validation(self) -> None:
         with pytest.raises(TypeError, match=r"max_retries cannot be None"):
-            Petstore(base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=cast(Any, None))
+            Msai(base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=cast(Any, None))
 
     @pytest.mark.respx(base_url=base_url)
     def test_received_text_for_expected_json(self, respx_mock: MockRouter) -> None:
@@ -660,12 +652,12 @@ class TestPetstore:
 
         respx_mock.get("/foo").mock(return_value=httpx.Response(200, text="my-custom-format"))
 
-        strict_client = Petstore(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        strict_client = Msai(base_url=base_url, api_key=api_key, _strict_response_validation=True)
 
         with pytest.raises(APIResponseValidationError):
             strict_client.get("/foo", cast_to=Model)
 
-        client = Petstore(base_url=base_url, api_key=api_key, _strict_response_validation=False)
+        client = Msai(base_url=base_url, api_key=api_key, _strict_response_validation=False)
 
         response = client.get("/foo", cast_to=Model)
         assert isinstance(response, str)  # type: ignore[unreachable]
@@ -693,7 +685,7 @@ class TestPetstore:
     )
     @mock.patch("time.time", mock.MagicMock(return_value=1696004797))
     def test_parse_retry_after_header(self, remaining_retries: int, retry_after: str, timeout: float) -> None:
-        client = Petstore(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        client = Msai(base_url=base_url, api_key=api_key, _strict_response_validation=True)
 
         headers = httpx.Headers({"retry-after": retry_after})
         options = FinalRequestOptions(method="get", url="/foo", max_retries=3)
@@ -730,7 +722,7 @@ class TestPetstore:
     @pytest.mark.parametrize("failure_mode", ["status", "exception"])
     def test_retries_taken(
         self,
-        client: Petstore,
+        client: Msai,
         failures_before_success: int,
         failure_mode: Literal["status", "exception"],
         respx_mock: MockRouter,
@@ -758,9 +750,7 @@ class TestPetstore:
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
     @mock.patch("msai._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
-    def test_omit_retry_count_header(
-        self, client: Petstore, failures_before_success: int, respx_mock: MockRouter
-    ) -> None:
+    def test_omit_retry_count_header(self, client: Msai, failures_before_success: int, respx_mock: MockRouter) -> None:
         client = client.with_options(max_retries=4)
 
         nb_retries = 0
@@ -782,7 +772,7 @@ class TestPetstore:
     @mock.patch("msai._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_overwrite_retry_count_header(
-        self, client: Petstore, failures_before_success: int, respx_mock: MockRouter
+        self, client: Msai, failures_before_success: int, respx_mock: MockRouter
     ) -> None:
         client = client.with_options(max_retries=4)
 
@@ -802,8 +792,8 @@ class TestPetstore:
         assert response.http_request.headers.get("x-stainless-retry-count") == "42"
 
 
-class TestAsyncPetstore:
-    client = AsyncPetstore(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+class TestAsyncMsai:
+    client = AsyncMsai(base_url=base_url, api_key=api_key, _strict_response_validation=True)
 
     @pytest.mark.respx(base_url=base_url)
     @pytest.mark.asyncio
@@ -852,7 +842,7 @@ class TestAsyncPetstore:
         assert isinstance(self.client.timeout, httpx.Timeout)
 
     def test_copy_default_headers(self) -> None:
-        client = AsyncPetstore(
+        client = AsyncMsai(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, default_headers={"X-Foo": "bar"}
         )
         assert client.default_headers["X-Foo"] == "bar"
@@ -886,7 +876,7 @@ class TestAsyncPetstore:
             client.copy(set_default_headers={}, default_headers={"X-Foo": "Bar"})
 
     def test_copy_default_query(self) -> None:
-        client = AsyncPetstore(
+        client = AsyncMsai(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, default_query={"foo": "bar"}
         )
         assert _get_params(client)["foo"] == "bar"
@@ -1011,7 +1001,7 @@ class TestAsyncPetstore:
         assert timeout == httpx.Timeout(100.0)
 
     async def test_client_timeout_option(self) -> None:
-        client = AsyncPetstore(
+        client = AsyncMsai(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, timeout=httpx.Timeout(0)
         )
 
@@ -1022,7 +1012,7 @@ class TestAsyncPetstore:
     async def test_http_client_timeout_option(self) -> None:
         # custom timeout given to the httpx client should be used
         async with httpx.AsyncClient(timeout=None) as http_client:
-            client = AsyncPetstore(
+            client = AsyncMsai(
                 base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
             )
 
@@ -1032,7 +1022,7 @@ class TestAsyncPetstore:
 
         # no timeout given to the httpx client should not use the httpx default
         async with httpx.AsyncClient() as http_client:
-            client = AsyncPetstore(
+            client = AsyncMsai(
                 base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
             )
 
@@ -1042,7 +1032,7 @@ class TestAsyncPetstore:
 
         # explicitly passing the default timeout currently results in it being ignored
         async with httpx.AsyncClient(timeout=HTTPX_DEFAULT_TIMEOUT) as http_client:
-            client = AsyncPetstore(
+            client = AsyncMsai(
                 base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
             )
 
@@ -1053,7 +1043,7 @@ class TestAsyncPetstore:
     def test_invalid_http_client(self) -> None:
         with pytest.raises(TypeError, match="Invalid `http_client` arg"):
             with httpx.Client() as http_client:
-                AsyncPetstore(
+                AsyncMsai(
                     base_url=base_url,
                     api_key=api_key,
                     _strict_response_validation=True,
@@ -1061,14 +1051,14 @@ class TestAsyncPetstore:
                 )
 
     def test_default_headers_option(self) -> None:
-        client = AsyncPetstore(
+        client = AsyncMsai(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, default_headers={"X-Foo": "bar"}
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-foo") == "bar"
         assert request.headers.get("x-stainless-lang") == "python"
 
-        client2 = AsyncPetstore(
+        client2 = AsyncMsai(
             base_url=base_url,
             api_key=api_key,
             _strict_response_validation=True,
@@ -1082,17 +1072,17 @@ class TestAsyncPetstore:
         assert request.headers.get("x-stainless-lang") == "my-overriding-header"
 
     def test_validate_headers(self) -> None:
-        client = AsyncPetstore(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        client = AsyncMsai(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("api_key") == api_key
 
-        with pytest.raises(PetstoreError):
-            with update_env(**{"PETSTORE_API_KEY": Omit()}):
-                client2 = AsyncPetstore(base_url=base_url, api_key=None, _strict_response_validation=True)
+        with pytest.raises(MsaiError):
+            with update_env(**{"MSAI_API_KEY": Omit()}):
+                client2 = AsyncMsai(base_url=base_url, api_key=None, _strict_response_validation=True)
             _ = client2
 
     def test_default_query_option(self) -> None:
-        client = AsyncPetstore(
+        client = AsyncMsai(
             base_url=base_url, api_key=api_key, _strict_response_validation=True, default_query={"query_param": "bar"}
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
@@ -1206,7 +1196,7 @@ class TestAsyncPetstore:
         params = dict(request.url.params)
         assert params == {"foo": "2"}
 
-    def test_multipart_repeating_array(self, async_client: AsyncPetstore) -> None:
+    def test_multipart_repeating_array(self, async_client: AsyncMsai) -> None:
         request = async_client._build_request(
             FinalRequestOptions.construct(
                 method="get",
@@ -1293,9 +1283,7 @@ class TestAsyncPetstore:
         assert response.foo == 2
 
     def test_base_url_setter(self) -> None:
-        client = AsyncPetstore(
-            base_url="https://example.com/from_init", api_key=api_key, _strict_response_validation=True
-        )
+        client = AsyncMsai(base_url="https://example.com/from_init", api_key=api_key, _strict_response_validation=True)
         assert client.base_url == "https://example.com/from_init/"
 
         client.base_url = "https://example.com/from_setter"  # type: ignore[assignment]
@@ -1303,17 +1291,15 @@ class TestAsyncPetstore:
         assert client.base_url == "https://example.com/from_setter/"
 
     def test_base_url_env(self) -> None:
-        with update_env(PETSTORE_BASE_URL="http://localhost:5000/from/env"):
-            client = AsyncPetstore(api_key=api_key, _strict_response_validation=True)
+        with update_env(MSAI_BASE_URL="http://localhost:5000/from/env"):
+            client = AsyncMsai(api_key=api_key, _strict_response_validation=True)
             assert client.base_url == "http://localhost:5000/from/env/"
 
     @pytest.mark.parametrize(
         "client",
         [
-            AsyncPetstore(
-                base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True
-            ),
-            AsyncPetstore(
+            AsyncMsai(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
+            AsyncMsai(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 _strict_response_validation=True,
@@ -1322,7 +1308,7 @@ class TestAsyncPetstore:
         ],
         ids=["standard", "custom http client"],
     )
-    def test_base_url_trailing_slash(self, client: AsyncPetstore) -> None:
+    def test_base_url_trailing_slash(self, client: AsyncMsai) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -1335,10 +1321,8 @@ class TestAsyncPetstore:
     @pytest.mark.parametrize(
         "client",
         [
-            AsyncPetstore(
-                base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True
-            ),
-            AsyncPetstore(
+            AsyncMsai(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
+            AsyncMsai(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 _strict_response_validation=True,
@@ -1347,7 +1331,7 @@ class TestAsyncPetstore:
         ],
         ids=["standard", "custom http client"],
     )
-    def test_base_url_no_trailing_slash(self, client: AsyncPetstore) -> None:
+    def test_base_url_no_trailing_slash(self, client: AsyncMsai) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -1360,10 +1344,8 @@ class TestAsyncPetstore:
     @pytest.mark.parametrize(
         "client",
         [
-            AsyncPetstore(
-                base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True
-            ),
-            AsyncPetstore(
+            AsyncMsai(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
+            AsyncMsai(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 _strict_response_validation=True,
@@ -1372,7 +1354,7 @@ class TestAsyncPetstore:
         ],
         ids=["standard", "custom http client"],
     )
-    def test_absolute_request_url(self, client: AsyncPetstore) -> None:
+    def test_absolute_request_url(self, client: AsyncMsai) -> None:
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -1383,7 +1365,7 @@ class TestAsyncPetstore:
         assert request.url == "https://myapi.com/foo"
 
     async def test_copied_client_does_not_close_http(self) -> None:
-        client = AsyncPetstore(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        client = AsyncMsai(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         assert not client.is_closed()
 
         copied = client.copy()
@@ -1395,7 +1377,7 @@ class TestAsyncPetstore:
         assert not client.is_closed()
 
     async def test_client_context_manager(self) -> None:
-        client = AsyncPetstore(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        client = AsyncMsai(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         async with client as c2:
             assert c2 is client
             assert not c2.is_closed()
@@ -1417,9 +1399,7 @@ class TestAsyncPetstore:
 
     async def test_client_max_retries_validation(self) -> None:
         with pytest.raises(TypeError, match=r"max_retries cannot be None"):
-            AsyncPetstore(
-                base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=cast(Any, None)
-            )
+            AsyncMsai(base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=cast(Any, None))
 
     @pytest.mark.respx(base_url=base_url)
     @pytest.mark.asyncio
@@ -1429,12 +1409,12 @@ class TestAsyncPetstore:
 
         respx_mock.get("/foo").mock(return_value=httpx.Response(200, text="my-custom-format"))
 
-        strict_client = AsyncPetstore(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        strict_client = AsyncMsai(base_url=base_url, api_key=api_key, _strict_response_validation=True)
 
         with pytest.raises(APIResponseValidationError):
             await strict_client.get("/foo", cast_to=Model)
 
-        client = AsyncPetstore(base_url=base_url, api_key=api_key, _strict_response_validation=False)
+        client = AsyncMsai(base_url=base_url, api_key=api_key, _strict_response_validation=False)
 
         response = await client.get("/foo", cast_to=Model)
         assert isinstance(response, str)  # type: ignore[unreachable]
@@ -1463,7 +1443,7 @@ class TestAsyncPetstore:
     @mock.patch("time.time", mock.MagicMock(return_value=1696004797))
     @pytest.mark.asyncio
     async def test_parse_retry_after_header(self, remaining_retries: int, retry_after: str, timeout: float) -> None:
-        client = AsyncPetstore(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        client = AsyncMsai(base_url=base_url, api_key=api_key, _strict_response_validation=True)
 
         headers = httpx.Headers({"retry-after": retry_after})
         options = FinalRequestOptions(method="get", url="/foo", max_retries=3)
@@ -1501,7 +1481,7 @@ class TestAsyncPetstore:
     @pytest.mark.parametrize("failure_mode", ["status", "exception"])
     async def test_retries_taken(
         self,
-        async_client: AsyncPetstore,
+        async_client: AsyncMsai,
         failures_before_success: int,
         failure_mode: Literal["status", "exception"],
         respx_mock: MockRouter,
@@ -1531,7 +1511,7 @@ class TestAsyncPetstore:
     @pytest.mark.respx(base_url=base_url)
     @pytest.mark.asyncio
     async def test_omit_retry_count_header(
-        self, async_client: AsyncPetstore, failures_before_success: int, respx_mock: MockRouter
+        self, async_client: AsyncMsai, failures_before_success: int, respx_mock: MockRouter
     ) -> None:
         client = async_client.with_options(max_retries=4)
 
@@ -1555,7 +1535,7 @@ class TestAsyncPetstore:
     @pytest.mark.respx(base_url=base_url)
     @pytest.mark.asyncio
     async def test_overwrite_retry_count_header(
-        self, async_client: AsyncPetstore, failures_before_success: int, respx_mock: MockRouter
+        self, async_client: AsyncMsai, failures_before_success: int, respx_mock: MockRouter
     ) -> None:
         client = async_client.with_options(max_retries=4)
 
