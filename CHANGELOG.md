@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-alpha.3 (2024-10-28)
+
+Full Changelog: [v0.1.0-alpha.2...v0.1.0-alpha.3](https://github.com/yhf98/msai-python/compare/v0.1.0-alpha.2...v0.1.0-alpha.3)
+
+### Features
+
+* **api:** update via SDK Studio ([#10](https://github.com/yhf98/msai-python/issues/10)) ([c0ff41f](https://github.com/yhf98/msai-python/commit/c0ff41f127996b17ff8df9ce27a8458c27d65280))
+
+
+### Chores
+
+* rebuild project due to codegen change ([#8](https://github.com/yhf98/msai-python/issues/8)) ([d39c2ac](https://github.com/yhf98/msai-python/commit/d39c2ac230771ae55a3f59f0be598be28ccc1314))
+
 ## 0.1.0-alpha.2 (2024-10-28)
 
 Full Changelog: [v0.1.0-alpha.1...v0.1.0-alpha.2](https://github.com/yhf98/msai-python/compare/v0.1.0-alpha.1...v0.1.0-alpha.2)
