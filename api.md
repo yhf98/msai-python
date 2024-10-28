@@ -4,6 +4,14 @@
 from msai.types import Order
 ```
 
+# AIMeme
+
+Types:
+
+```python
+from msai.types import APIResponse
+```
+
 # Pets
 
 Types:
