@@ -3,26 +3,16 @@
 from . import types
 from ._types import NOT_GIVEN, NoneType, NotGiven, Transport, ProxiesTypes
 from ._utils import file_from_path
-from ._client import (
-    Client,
-    Stream,
-    Timeout,
-    Petstore,
-    Transport,
-    AsyncClient,
-    AsyncStream,
-    AsyncPetstore,
-    RequestOptions,
-)
+from ._client import Msai, Client, Stream, Timeout, AsyncMsai, Transport, AsyncClient, AsyncStream, RequestOptions
 from ._models import BaseModel
 from ._version import __title__, __version__
 from ._response import APIResponse as APIResponse, AsyncAPIResponse as AsyncAPIResponse
 from ._constants import DEFAULT_TIMEOUT, DEFAULT_MAX_RETRIES, DEFAULT_CONNECTION_LIMITS
 from ._exceptions import (
     APIError,
+    MsaiError,
     ConflictError,
     NotFoundError,
-    PetstoreError,
     APIStatusError,
     RateLimitError,
     APITimeoutError,
@@ -46,7 +36,7 @@ __all__ = [
     "ProxiesTypes",
     "NotGiven",
     "NOT_GIVEN",
-    "PetstoreError",
+    "MsaiError",
     "APIError",
     "APIStatusError",
     "APITimeoutError",
@@ -66,8 +56,8 @@ __all__ = [
     "AsyncClient",
     "Stream",
     "AsyncStream",
-    "Petstore",
-    "AsyncPetstore",
+    "Msai",
+    "AsyncMsai",
     "file_from_path",
     "BaseModel",
     "DEFAULT_TIMEOUT",

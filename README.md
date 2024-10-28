@@ -1,8 +1,8 @@
-# Petstore Python API library
+# Msai Python API library
 
 [![PyPI version](https://img.shields.io/pypi/v/msai.svg)](https://pypi.org/project/msai/)
 
-The Petstore Python library provides convenient access to the Petstore REST API from any Python 3.7+
+The Msai Python library provides convenient access to the Msai REST API from any Python 3.7+
 application. The library includes type definitions for all request params and response fields,
 and offers both synchronous and asynchronous clients powered by [httpx](https://github.com/encode/httpx).
 
@@ -28,11 +28,11 @@ The full API of this library can be found in [api.md](api.md).
 
 ```python
 import os
-from msai import Petstore
+from msai import Msai
 
-client = Petstore(
+client = Msai(
     # This is the default and can be omitted
-    api_key=os.environ.get("PETSTORE_API_KEY"),
+    api_key=os.environ.get("MSAI_API_KEY"),
 )
 
 order = client.store.create_order(
@@ -45,21 +45,21 @@ print(order.id)
 
 While you can provide an `api_key` keyword argument,
 we recommend using [python-dotenv](https://pypi.org/project/python-dotenv/)
-to add `PETSTORE_API_KEY="My API Key"` to your `.env` file
+to add `MSAI_API_KEY="My API Key"` to your `.env` file
 so that your API Key is not stored in source control.
 
 ## Async usage
 
-Simply import `AsyncPetstore` instead of `Petstore` and use `await` with each API call:
+Simply import `AsyncMsai` instead of `Msai` and use `await` with each API call:
 
 ```python
 import os
 import asyncio
-from msai import AsyncPetstore
+from msai import AsyncMsai
 
-client = AsyncPetstore(
+client = AsyncMsai(
     # This is the default and can be omitted
-    api_key=os.environ.get("PETSTORE_API_KEY"),
+    api_key=os.environ.get("MSAI_API_KEY"),
 )
 
 
@@ -97,9 +97,9 @@ All errors inherit from `msai.APIError`.
 
 ```python
 import msai
-from msai import Petstore
+from msai import Msai
 
-client = Petstore()
+client = Msai()
 
 try:
     client.store.inventory()
@@ -136,10 +136,10 @@ Connection errors (for example, due to a network connectivity problem), 408 Requ
 You can use the `max_retries` option to configure or disable retry settings:
 
 ```python
-from msai import Petstore
+from msai import Msai
 
 # Configure the default for all requests:
-client = Petstore(
+client = Msai(
     # default is 2
     max_retries=0,
 )
@@ -154,16 +154,16 @@ By default requests time out after 1 minute. You can configure this with a `time
 which accepts a float or an [`httpx.Timeout`](https://www.python-httpx.org/advanced/#fine-tuning-the-configuration) object:
 
 ```python
-from msai import Petstore
+from msai import Msai
 
 # Configure the default for all requests:
-client = Petstore(
+client = Msai(
     # 20 seconds (default is 1 minute)
     timeout=20.0,
 )
 
 # More granular control:
-client = Petstore(
+client = Msai(
     timeout=httpx.Timeout(60.0, read=5.0, write=10.0, connect=2.0),
 )
 
@@ -181,10 +181,10 @@ Note that requests that time out are [retried twice by default](#retries).
 
 We use the standard library [`logging`](https://docs.python.org/3/library/logging.html) module.
 
-You can enable logging by setting the environment variable `PETSTORE_LOG` to `debug`.
+You can enable logging by setting the environment variable `MSAI_LOG` to `debug`.
 
 ```shell
-$ export PETSTORE_LOG=debug
+$ export MSAI_LOG=debug
 ```
 
 ### How to tell whether `None` means `null` or missing
@@ -204,9 +204,9 @@ if response.my_field is None:
 The "raw" Response object can be accessed by prefixing `.with_raw_response.` to any HTTP method call, e.g.,
 
 ```py
-from msai import Petstore
+from msai import Msai
 
-client = Petstore()
+client = Msai()
 response = client.store.with_raw_response.inventory()
 print(response.headers.get('X-My-Header'))
 
@@ -278,10 +278,10 @@ You can directly override the [httpx client](https://www.python-httpx.org/api/#c
 - Additional [advanced](https://www.python-httpx.org/advanced/clients/) functionality
 
 ```python
-from msai import Petstore, DefaultHttpxClient
+from msai import Msai, DefaultHttpxClient
 
-client = Petstore(
-    # Or use the `PETSTORE_BASE_URL` env var
+client = Msai(
+    # Or use the `MSAI_BASE_URL` env var
     base_url="http://my.test.server.example.com:8083",
     http_client=DefaultHttpxClient(
         proxies="http://my.test.proxy.example.com",

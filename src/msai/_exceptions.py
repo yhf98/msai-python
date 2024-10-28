@@ -18,11 +18,11 @@ __all__ = [
 ]
 
 
-class PetstoreError(Exception):
+class MsaiError(Exception):
     pass
 
 
-class APIError(PetstoreError):
+class APIError(MsaiError):
     message: str
     request: httpx.Request
 
