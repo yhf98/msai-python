@@ -7,7 +7,7 @@ from typing import Any, cast
 
 import pytest
 
-from msai import Petstore, AsyncPetstore
+from msai import Msai, AsyncMsai
 from msai.types import (
     User,
 )
@@ -20,12 +20,12 @@ class TestUser:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
     @parametrize
-    def test_method_create(self, client: Petstore) -> None:
+    def test_method_create(self, client: Msai) -> None:
         user = client.user.create()
         assert user is None
 
     @parametrize
-    def test_method_create_with_all_params(self, client: Petstore) -> None:
+    def test_method_create_with_all_params(self, client: Msai) -> None:
         user = client.user.create(
             id=10,
             email="john@email.com",
@@ -39,7 +39,7 @@ class TestUser:
         assert user is None
 
     @parametrize
-    def test_raw_response_create(self, client: Petstore) -> None:
+    def test_raw_response_create(self, client: Msai) -> None:
         response = client.user.with_raw_response.create()
 
         assert response.is_closed is True
@@ -48,7 +48,7 @@ class TestUser:
         assert user is None
 
     @parametrize
-    def test_streaming_response_create(self, client: Petstore) -> None:
+    def test_streaming_response_create(self, client: Msai) -> None:
         with client.user.with_streaming_response.create() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -59,14 +59,14 @@ class TestUser:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_retrieve(self, client: Petstore) -> None:
+    def test_method_retrieve(self, client: Msai) -> None:
         user = client.user.retrieve(
             "username",
         )
         assert_matches_type(User, user, path=["response"])
 
     @parametrize
-    def test_raw_response_retrieve(self, client: Petstore) -> None:
+    def test_raw_response_retrieve(self, client: Msai) -> None:
         response = client.user.with_raw_response.retrieve(
             "username",
         )
@@ -77,7 +77,7 @@ class TestUser:
         assert_matches_type(User, user, path=["response"])
 
     @parametrize
-    def test_streaming_response_retrieve(self, client: Petstore) -> None:
+    def test_streaming_response_retrieve(self, client: Msai) -> None:
         with client.user.with_streaming_response.retrieve(
             "username",
         ) as response:
@@ -90,21 +90,21 @@ class TestUser:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_retrieve(self, client: Petstore) -> None:
+    def test_path_params_retrieve(self, client: Msai) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `username` but received ''"):
             client.user.with_raw_response.retrieve(
                 "",
             )
 
     @parametrize
-    def test_method_update(self, client: Petstore) -> None:
+    def test_method_update(self, client: Msai) -> None:
         user = client.user.update(
             existing_username="username",
         )
         assert user is None
 
     @parametrize
-    def test_method_update_with_all_params(self, client: Petstore) -> None:
+    def test_method_update_with_all_params(self, client: Msai) -> None:
         user = client.user.update(
             existing_username="username",
             id=10,
@@ -119,7 +119,7 @@ class TestUser:
         assert user is None
 
     @parametrize
-    def test_raw_response_update(self, client: Petstore) -> None:
+    def test_raw_response_update(self, client: Msai) -> None:
         response = client.user.with_raw_response.update(
             existing_username="username",
         )
@@ -130,7 +130,7 @@ class TestUser:
         assert user is None
 
     @parametrize
-    def test_streaming_response_update(self, client: Petstore) -> None:
+    def test_streaming_response_update(self, client: Msai) -> None:
         with client.user.with_streaming_response.update(
             existing_username="username",
         ) as response:
@@ -143,7 +143,7 @@ class TestUser:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_update(self, client: Petstore) -> None:
+    def test_path_params_update(self, client: Msai) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `existing_username` but received ''"):
             client.user.with_raw_response.update(
                 existing_username="",
@@ -151,14 +151,14 @@ class TestUser:
             )
 
     @parametrize
-    def test_method_delete(self, client: Petstore) -> None:
+    def test_method_delete(self, client: Msai) -> None:
         user = client.user.delete(
             "username",
         )
         assert user is None
 
     @parametrize
-    def test_raw_response_delete(self, client: Petstore) -> None:
+    def test_raw_response_delete(self, client: Msai) -> None:
         response = client.user.with_raw_response.delete(
             "username",
         )
@@ -169,7 +169,7 @@ class TestUser:
         assert user is None
 
     @parametrize
-    def test_streaming_response_delete(self, client: Petstore) -> None:
+    def test_streaming_response_delete(self, client: Msai) -> None:
         with client.user.with_streaming_response.delete(
             "username",
         ) as response:
@@ -182,21 +182,21 @@ class TestUser:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_path_params_delete(self, client: Petstore) -> None:
+    def test_path_params_delete(self, client: Msai) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `username` but received ''"):
             client.user.with_raw_response.delete(
                 "",
             )
 
     @parametrize
-    def test_method_create_with_list(self, client: Petstore) -> None:
+    def test_method_create_with_list(self, client: Msai) -> None:
         user = client.user.create_with_list(
             items=[{}, {}, {}],
         )
         assert_matches_type(User, user, path=["response"])
 
     @parametrize
-    def test_raw_response_create_with_list(self, client: Petstore) -> None:
+    def test_raw_response_create_with_list(self, client: Msai) -> None:
         response = client.user.with_raw_response.create_with_list(
             items=[{}, {}, {}],
         )
@@ -207,7 +207,7 @@ class TestUser:
         assert_matches_type(User, user, path=["response"])
 
     @parametrize
-    def test_streaming_response_create_with_list(self, client: Petstore) -> None:
+    def test_streaming_response_create_with_list(self, client: Msai) -> None:
         with client.user.with_streaming_response.create_with_list(
             items=[{}, {}, {}],
         ) as response:
@@ -220,12 +220,12 @@ class TestUser:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_login(self, client: Petstore) -> None:
+    def test_method_login(self, client: Msai) -> None:
         user = client.user.login()
         assert_matches_type(str, user, path=["response"])
 
     @parametrize
-    def test_method_login_with_all_params(self, client: Petstore) -> None:
+    def test_method_login_with_all_params(self, client: Msai) -> None:
         user = client.user.login(
             password="password",
             username="username",
@@ -233,7 +233,7 @@ class TestUser:
         assert_matches_type(str, user, path=["response"])
 
     @parametrize
-    def test_raw_response_login(self, client: Petstore) -> None:
+    def test_raw_response_login(self, client: Msai) -> None:
         response = client.user.with_raw_response.login()
 
         assert response.is_closed is True
@@ -242,7 +242,7 @@ class TestUser:
         assert_matches_type(str, user, path=["response"])
 
     @parametrize
-    def test_streaming_response_login(self, client: Petstore) -> None:
+    def test_streaming_response_login(self, client: Msai) -> None:
         with client.user.with_streaming_response.login() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -253,12 +253,12 @@ class TestUser:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_logout(self, client: Petstore) -> None:
+    def test_method_logout(self, client: Msai) -> None:
         user = client.user.logout()
         assert user is None
 
     @parametrize
-    def test_raw_response_logout(self, client: Petstore) -> None:
+    def test_raw_response_logout(self, client: Msai) -> None:
         response = client.user.with_raw_response.logout()
 
         assert response.is_closed is True
@@ -267,7 +267,7 @@ class TestUser:
         assert user is None
 
     @parametrize
-    def test_streaming_response_logout(self, client: Petstore) -> None:
+    def test_streaming_response_logout(self, client: Msai) -> None:
         with client.user.with_streaming_response.logout() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -282,12 +282,12 @@ class TestAsyncUser:
     parametrize = pytest.mark.parametrize("async_client", [False, True], indirect=True, ids=["loose", "strict"])
 
     @parametrize
-    async def test_method_create(self, async_client: AsyncPetstore) -> None:
+    async def test_method_create(self, async_client: AsyncMsai) -> None:
         user = await async_client.user.create()
         assert user is None
 
     @parametrize
-    async def test_method_create_with_all_params(self, async_client: AsyncPetstore) -> None:
+    async def test_method_create_with_all_params(self, async_client: AsyncMsai) -> None:
         user = await async_client.user.create(
             id=10,
             email="john@email.com",
@@ -301,7 +301,7 @@ class TestAsyncUser:
         assert user is None
 
     @parametrize
-    async def test_raw_response_create(self, async_client: AsyncPetstore) -> None:
+    async def test_raw_response_create(self, async_client: AsyncMsai) -> None:
         response = await async_client.user.with_raw_response.create()
 
         assert response.is_closed is True
@@ -310,7 +310,7 @@ class TestAsyncUser:
         assert user is None
 
     @parametrize
-    async def test_streaming_response_create(self, async_client: AsyncPetstore) -> None:
+    async def test_streaming_response_create(self, async_client: AsyncMsai) -> None:
         async with async_client.user.with_streaming_response.create() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -321,14 +321,14 @@ class TestAsyncUser:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_retrieve(self, async_client: AsyncPetstore) -> None:
+    async def test_method_retrieve(self, async_client: AsyncMsai) -> None:
         user = await async_client.user.retrieve(
             "username",
         )
         assert_matches_type(User, user, path=["response"])
 
     @parametrize
-    async def test_raw_response_retrieve(self, async_client: AsyncPetstore) -> None:
+    async def test_raw_response_retrieve(self, async_client: AsyncMsai) -> None:
         response = await async_client.user.with_raw_response.retrieve(
             "username",
         )
@@ -339,7 +339,7 @@ class TestAsyncUser:
         assert_matches_type(User, user, path=["response"])
 
     @parametrize
-    async def test_streaming_response_retrieve(self, async_client: AsyncPetstore) -> None:
+    async def test_streaming_response_retrieve(self, async_client: AsyncMsai) -> None:
         async with async_client.user.with_streaming_response.retrieve(
             "username",
         ) as response:
@@ -352,21 +352,21 @@ class TestAsyncUser:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_retrieve(self, async_client: AsyncPetstore) -> None:
+    async def test_path_params_retrieve(self, async_client: AsyncMsai) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `username` but received ''"):
             await async_client.user.with_raw_response.retrieve(
                 "",
             )
 
     @parametrize
-    async def test_method_update(self, async_client: AsyncPetstore) -> None:
+    async def test_method_update(self, async_client: AsyncMsai) -> None:
         user = await async_client.user.update(
             existing_username="username",
         )
         assert user is None
 
     @parametrize
-    async def test_method_update_with_all_params(self, async_client: AsyncPetstore) -> None:
+    async def test_method_update_with_all_params(self, async_client: AsyncMsai) -> None:
         user = await async_client.user.update(
             existing_username="username",
             id=10,
@@ -381,7 +381,7 @@ class TestAsyncUser:
         assert user is None
 
     @parametrize
-    async def test_raw_response_update(self, async_client: AsyncPetstore) -> None:
+    async def test_raw_response_update(self, async_client: AsyncMsai) -> None:
         response = await async_client.user.with_raw_response.update(
             existing_username="username",
         )
@@ -392,7 +392,7 @@ class TestAsyncUser:
         assert user is None
 
     @parametrize
-    async def test_streaming_response_update(self, async_client: AsyncPetstore) -> None:
+    async def test_streaming_response_update(self, async_client: AsyncMsai) -> None:
         async with async_client.user.with_streaming_response.update(
             existing_username="username",
         ) as response:
@@ -405,7 +405,7 @@ class TestAsyncUser:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_update(self, async_client: AsyncPetstore) -> None:
+    async def test_path_params_update(self, async_client: AsyncMsai) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `existing_username` but received ''"):
             await async_client.user.with_raw_response.update(
                 existing_username="",
@@ -413,14 +413,14 @@ class TestAsyncUser:
             )
 
     @parametrize
-    async def test_method_delete(self, async_client: AsyncPetstore) -> None:
+    async def test_method_delete(self, async_client: AsyncMsai) -> None:
         user = await async_client.user.delete(
             "username",
         )
         assert user is None
 
     @parametrize
-    async def test_raw_response_delete(self, async_client: AsyncPetstore) -> None:
+    async def test_raw_response_delete(self, async_client: AsyncMsai) -> None:
         response = await async_client.user.with_raw_response.delete(
             "username",
         )
@@ -431,7 +431,7 @@ class TestAsyncUser:
         assert user is None
 
     @parametrize
-    async def test_streaming_response_delete(self, async_client: AsyncPetstore) -> None:
+    async def test_streaming_response_delete(self, async_client: AsyncMsai) -> None:
         async with async_client.user.with_streaming_response.delete(
             "username",
         ) as response:
@@ -444,21 +444,21 @@ class TestAsyncUser:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_path_params_delete(self, async_client: AsyncPetstore) -> None:
+    async def test_path_params_delete(self, async_client: AsyncMsai) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `username` but received ''"):
             await async_client.user.with_raw_response.delete(
                 "",
             )
 
     @parametrize
-    async def test_method_create_with_list(self, async_client: AsyncPetstore) -> None:
+    async def test_method_create_with_list(self, async_client: AsyncMsai) -> None:
         user = await async_client.user.create_with_list(
             items=[{}, {}, {}],
         )
         assert_matches_type(User, user, path=["response"])
 
     @parametrize
-    async def test_raw_response_create_with_list(self, async_client: AsyncPetstore) -> None:
+    async def test_raw_response_create_with_list(self, async_client: AsyncMsai) -> None:
         response = await async_client.user.with_raw_response.create_with_list(
             items=[{}, {}, {}],
         )
@@ -469,7 +469,7 @@ class TestAsyncUser:
         assert_matches_type(User, user, path=["response"])
 
     @parametrize
-    async def test_streaming_response_create_with_list(self, async_client: AsyncPetstore) -> None:
+    async def test_streaming_response_create_with_list(self, async_client: AsyncMsai) -> None:
         async with async_client.user.with_streaming_response.create_with_list(
             items=[{}, {}, {}],
         ) as response:
@@ -482,12 +482,12 @@ class TestAsyncUser:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_login(self, async_client: AsyncPetstore) -> None:
+    async def test_method_login(self, async_client: AsyncMsai) -> None:
         user = await async_client.user.login()
         assert_matches_type(str, user, path=["response"])
 
     @parametrize
-    async def test_method_login_with_all_params(self, async_client: AsyncPetstore) -> None:
+    async def test_method_login_with_all_params(self, async_client: AsyncMsai) -> None:
         user = await async_client.user.login(
             password="password",
             username="username",
@@ -495,7 +495,7 @@ class TestAsyncUser:
         assert_matches_type(str, user, path=["response"])
 
     @parametrize
-    async def test_raw_response_login(self, async_client: AsyncPetstore) -> None:
+    async def test_raw_response_login(self, async_client: AsyncMsai) -> None:
         response = await async_client.user.with_raw_response.login()
 
         assert response.is_closed is True
@@ -504,7 +504,7 @@ class TestAsyncUser:
         assert_matches_type(str, user, path=["response"])
 
     @parametrize
-    async def test_streaming_response_login(self, async_client: AsyncPetstore) -> None:
+    async def test_streaming_response_login(self, async_client: AsyncMsai) -> None:
         async with async_client.user.with_streaming_response.login() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -515,12 +515,12 @@ class TestAsyncUser:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_logout(self, async_client: AsyncPetstore) -> None:
+    async def test_method_logout(self, async_client: AsyncMsai) -> None:
         user = await async_client.user.logout()
         assert user is None
 
     @parametrize
-    async def test_raw_response_logout(self, async_client: AsyncPetstore) -> None:
+    async def test_raw_response_logout(self, async_client: AsyncMsai) -> None:
         response = await async_client.user.with_raw_response.logout()
 
         assert response.is_closed is True
@@ -529,7 +529,7 @@ class TestAsyncUser:
         assert user is None
 
     @parametrize
-    async def test_streaming_response_logout(self, async_client: AsyncPetstore) -> None:
+    async def test_streaming_response_logout(self, async_client: AsyncMsai) -> None:
         async with async_client.user.with_streaming_response.logout() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"

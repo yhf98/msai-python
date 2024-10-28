@@ -7,7 +7,7 @@ from typing import Any, cast
 
 import pytest
 
-from msai import Petstore, AsyncPetstore
+from msai import Msai, AsyncMsai
 from msai.types import StoreInventoryResponse
 from msai._utils import parse_datetime
 from tests.utils import assert_matches_type
@@ -20,12 +20,12 @@ class TestStore:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
     @parametrize
-    def test_method_create_order(self, client: Petstore) -> None:
+    def test_method_create_order(self, client: Msai) -> None:
         store = client.store.create_order()
         assert_matches_type(Order, store, path=["response"])
 
     @parametrize
-    def test_method_create_order_with_all_params(self, client: Petstore) -> None:
+    def test_method_create_order_with_all_params(self, client: Msai) -> None:
         store = client.store.create_order(
             id=10,
             complete=True,
@@ -37,7 +37,7 @@ class TestStore:
         assert_matches_type(Order, store, path=["response"])
 
     @parametrize
-    def test_raw_response_create_order(self, client: Petstore) -> None:
+    def test_raw_response_create_order(self, client: Msai) -> None:
         response = client.store.with_raw_response.create_order()
 
         assert response.is_closed is True
@@ -46,7 +46,7 @@ class TestStore:
         assert_matches_type(Order, store, path=["response"])
 
     @parametrize
-    def test_streaming_response_create_order(self, client: Petstore) -> None:
+    def test_streaming_response_create_order(self, client: Msai) -> None:
         with client.store.with_streaming_response.create_order() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -57,12 +57,12 @@ class TestStore:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_inventory(self, client: Petstore) -> None:
+    def test_method_inventory(self, client: Msai) -> None:
         store = client.store.inventory()
         assert_matches_type(StoreInventoryResponse, store, path=["response"])
 
     @parametrize
-    def test_raw_response_inventory(self, client: Petstore) -> None:
+    def test_raw_response_inventory(self, client: Msai) -> None:
         response = client.store.with_raw_response.inventory()
 
         assert response.is_closed is True
@@ -71,7 +71,7 @@ class TestStore:
         assert_matches_type(StoreInventoryResponse, store, path=["response"])
 
     @parametrize
-    def test_streaming_response_inventory(self, client: Petstore) -> None:
+    def test_streaming_response_inventory(self, client: Msai) -> None:
         with client.store.with_streaming_response.inventory() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -86,12 +86,12 @@ class TestAsyncStore:
     parametrize = pytest.mark.parametrize("async_client", [False, True], indirect=True, ids=["loose", "strict"])
 
     @parametrize
-    async def test_method_create_order(self, async_client: AsyncPetstore) -> None:
+    async def test_method_create_order(self, async_client: AsyncMsai) -> None:
         store = await async_client.store.create_order()
         assert_matches_type(Order, store, path=["response"])
 
     @parametrize
-    async def test_method_create_order_with_all_params(self, async_client: AsyncPetstore) -> None:
+    async def test_method_create_order_with_all_params(self, async_client: AsyncMsai) -> None:
         store = await async_client.store.create_order(
             id=10,
             complete=True,
@@ -103,7 +103,7 @@ class TestAsyncStore:
         assert_matches_type(Order, store, path=["response"])
 
     @parametrize
-    async def test_raw_response_create_order(self, async_client: AsyncPetstore) -> None:
+    async def test_raw_response_create_order(self, async_client: AsyncMsai) -> None:
         response = await async_client.store.with_raw_response.create_order()
 
         assert response.is_closed is True
@@ -112,7 +112,7 @@ class TestAsyncStore:
         assert_matches_type(Order, store, path=["response"])
 
     @parametrize
-    async def test_streaming_response_create_order(self, async_client: AsyncPetstore) -> None:
+    async def test_streaming_response_create_order(self, async_client: AsyncMsai) -> None:
         async with async_client.store.with_streaming_response.create_order() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -123,12 +123,12 @@ class TestAsyncStore:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_inventory(self, async_client: AsyncPetstore) -> None:
+    async def test_method_inventory(self, async_client: AsyncMsai) -> None:
         store = await async_client.store.inventory()
         assert_matches_type(StoreInventoryResponse, store, path=["response"])
 
     @parametrize
-    async def test_raw_response_inventory(self, async_client: AsyncPetstore) -> None:
+    async def test_raw_response_inventory(self, async_client: AsyncMsai) -> None:
         response = await async_client.store.with_raw_response.inventory()
 
         assert response.is_closed is True
@@ -137,7 +137,7 @@ class TestAsyncStore:
         assert_matches_type(StoreInventoryResponse, store, path=["response"])
 
     @parametrize
-    async def test_streaming_response_inventory(self, async_client: AsyncPetstore) -> None:
+    async def test_streaming_response_inventory(self, async_client: AsyncMsai) -> None:
         async with async_client.store.with_streaming_response.inventory() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"

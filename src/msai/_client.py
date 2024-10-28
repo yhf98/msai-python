@@ -25,7 +25,7 @@ from ._utils import (
 )
 from ._version import __version__
 from ._streaming import Stream as Stream, AsyncStream as AsyncStream
-from ._exceptions import PetstoreError, APIStatusError
+from ._exceptions import MsaiError, APIStatusError
 from ._base_client import (
     DEFAULT_MAX_RETRIES,
     SyncAPIClient,
@@ -38,19 +38,19 @@ __all__ = [
     "ProxiesTypes",
     "RequestOptions",
     "resources",
-    "Petstore",
-    "AsyncPetstore",
+    "Msai",
+    "AsyncMsai",
     "Client",
     "AsyncClient",
 ]
 
 
-class Petstore(SyncAPIClient):
+class Msai(SyncAPIClient):
     pets: resources.PetsResource
     store: resources.StoreResource
     user: resources.UserResource
-    with_raw_response: PetstoreWithRawResponse
-    with_streaming_response: PetstoreWithStreamedResponse
+    with_raw_response: MsaiWithRawResponse
+    with_streaming_response: MsaiWithStreamedResponse
 
     # client options
     api_key: str
@@ -78,20 +78,20 @@ class Petstore(SyncAPIClient):
         # part of our public interface in the future.
         _strict_response_validation: bool = False,
     ) -> None:
-        """Construct a new synchronous petstore client instance.
+        """Construct a new synchronous msai client instance.
 
-        This automatically infers the `api_key` argument from the `PETSTORE_API_KEY` environment variable if it is not provided.
+        This automatically infers the `api_key` argument from the `MSAI_API_KEY` environment variable if it is not provided.
         """
         if api_key is None:
-            api_key = os.environ.get("PETSTORE_API_KEY")
+            api_key = os.environ.get("MSAI_API_KEY")
         if api_key is None:
-            raise PetstoreError(
-                "The api_key client option must be set either by passing api_key to the client or by setting the PETSTORE_API_KEY environment variable"
+            raise MsaiError(
+                "The api_key client option must be set either by passing api_key to the client or by setting the MSAI_API_KEY environment variable"
             )
         self.api_key = api_key
 
         if base_url is None:
-            base_url = os.environ.get("PETSTORE_BASE_URL")
+            base_url = os.environ.get("MSAI_BASE_URL")
         if base_url is None:
             base_url = f"https://petstore3.swagger.io/api/v3"
 
@@ -109,8 +109,8 @@ class Petstore(SyncAPIClient):
         self.pets = resources.PetsResource(self)
         self.store = resources.StoreResource(self)
         self.user = resources.UserResource(self)
-        self.with_raw_response = PetstoreWithRawResponse(self)
-        self.with_streaming_response = PetstoreWithStreamedResponse(self)
+        self.with_raw_response = MsaiWithRawResponse(self)
+        self.with_streaming_response = MsaiWithStreamedResponse(self)
 
     @property
     @override
@@ -217,12 +217,12 @@ class Petstore(SyncAPIClient):
         return APIStatusError(err_msg, response=response, body=body)
 
 
-class AsyncPetstore(AsyncAPIClient):
+class AsyncMsai(AsyncAPIClient):
     pets: resources.AsyncPetsResource
     store: resources.AsyncStoreResource
     user: resources.AsyncUserResource
-    with_raw_response: AsyncPetstoreWithRawResponse
-    with_streaming_response: AsyncPetstoreWithStreamedResponse
+    with_raw_response: AsyncMsaiWithRawResponse
+    with_streaming_response: AsyncMsaiWithStreamedResponse
 
     # client options
     api_key: str
@@ -250,20 +250,20 @@ class AsyncPetstore(AsyncAPIClient):
         # part of our public interface in the future.
         _strict_response_validation: bool = False,
     ) -> None:
-        """Construct a new async petstore client instance.
+        """Construct a new async msai client instance.
 
-        This automatically infers the `api_key` argument from the `PETSTORE_API_KEY` environment variable if it is not provided.
+        This automatically infers the `api_key` argument from the `MSAI_API_KEY` environment variable if it is not provided.
         """
         if api_key is None:
-            api_key = os.environ.get("PETSTORE_API_KEY")
+            api_key = os.environ.get("MSAI_API_KEY")
         if api_key is None:
-            raise PetstoreError(
-                "The api_key client option must be set either by passing api_key to the client or by setting the PETSTORE_API_KEY environment variable"
+            raise MsaiError(
+                "The api_key client option must be set either by passing api_key to the client or by setting the MSAI_API_KEY environment variable"
             )
         self.api_key = api_key
 
         if base_url is None:
-            base_url = os.environ.get("PETSTORE_BASE_URL")
+            base_url = os.environ.get("MSAI_BASE_URL")
         if base_url is None:
             base_url = f"https://petstore3.swagger.io/api/v3"
 
@@ -281,8 +281,8 @@ class AsyncPetstore(AsyncAPIClient):
         self.pets = resources.AsyncPetsResource(self)
         self.store = resources.AsyncStoreResource(self)
         self.user = resources.AsyncUserResource(self)
-        self.with_raw_response = AsyncPetstoreWithRawResponse(self)
-        self.with_streaming_response = AsyncPetstoreWithStreamedResponse(self)
+        self.with_raw_response = AsyncMsaiWithRawResponse(self)
+        self.with_streaming_response = AsyncMsaiWithStreamedResponse(self)
 
     @property
     @override
@@ -389,34 +389,34 @@ class AsyncPetstore(AsyncAPIClient):
         return APIStatusError(err_msg, response=response, body=body)
 
 
-class PetstoreWithRawResponse:
-    def __init__(self, client: Petstore) -> None:
+class MsaiWithRawResponse:
+    def __init__(self, client: Msai) -> None:
         self.pets = resources.PetsResourceWithRawResponse(client.pets)
         self.store = resources.StoreResourceWithRawResponse(client.store)
         self.user = resources.UserResourceWithRawResponse(client.user)
 
 
-class AsyncPetstoreWithRawResponse:
-    def __init__(self, client: AsyncPetstore) -> None:
+class AsyncMsaiWithRawResponse:
+    def __init__(self, client: AsyncMsai) -> None:
         self.pets = resources.AsyncPetsResourceWithRawResponse(client.pets)
         self.store = resources.AsyncStoreResourceWithRawResponse(client.store)
         self.user = resources.AsyncUserResourceWithRawResponse(client.user)
 
 
-class PetstoreWithStreamedResponse:
-    def __init__(self, client: Petstore) -> None:
+class MsaiWithStreamedResponse:
+    def __init__(self, client: Msai) -> None:
         self.pets = resources.PetsResourceWithStreamingResponse(client.pets)
         self.store = resources.StoreResourceWithStreamingResponse(client.store)
         self.user = resources.UserResourceWithStreamingResponse(client.user)
 
 
-class AsyncPetstoreWithStreamedResponse:
-    def __init__(self, client: AsyncPetstore) -> None:
+class AsyncMsaiWithStreamedResponse:
+    def __init__(self, client: AsyncMsai) -> None:
         self.pets = resources.AsyncPetsResourceWithStreamingResponse(client.pets)
         self.store = resources.AsyncStoreResourceWithStreamingResponse(client.store)
         self.user = resources.AsyncUserResourceWithStreamingResponse(client.user)
 
 
-Client = Petstore
+Client = Msai
 
-AsyncClient = AsyncPetstore
+AsyncClient = AsyncMsai

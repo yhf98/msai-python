@@ -7,7 +7,7 @@ from typing import Any, cast
 
 import pytest
 
-from msai import Petstore, AsyncPetstore
+from msai import Msai, AsyncMsai
 from tests.utils import assert_matches_type
 from msai.types.shared import Order
 
@@ -18,14 +18,14 @@ class TestOrder:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
     @parametrize
-    def test_method_retrieve(self, client: Petstore) -> None:
+    def test_method_retrieve(self, client: Msai) -> None:
         order = client.store.order.retrieve(
             0,
         )
         assert_matches_type(Order, order, path=["response"])
 
     @parametrize
-    def test_raw_response_retrieve(self, client: Petstore) -> None:
+    def test_raw_response_retrieve(self, client: Msai) -> None:
         response = client.store.order.with_raw_response.retrieve(
             0,
         )
@@ -36,7 +36,7 @@ class TestOrder:
         assert_matches_type(Order, order, path=["response"])
 
     @parametrize
-    def test_streaming_response_retrieve(self, client: Petstore) -> None:
+    def test_streaming_response_retrieve(self, client: Msai) -> None:
         with client.store.order.with_streaming_response.retrieve(
             0,
         ) as response:
@@ -49,14 +49,14 @@ class TestOrder:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_delete_order(self, client: Petstore) -> None:
+    def test_method_delete_order(self, client: Msai) -> None:
         order = client.store.order.delete_order(
             0,
         )
         assert order is None
 
     @parametrize
-    def test_raw_response_delete_order(self, client: Petstore) -> None:
+    def test_raw_response_delete_order(self, client: Msai) -> None:
         response = client.store.order.with_raw_response.delete_order(
             0,
         )
@@ -67,7 +67,7 @@ class TestOrder:
         assert order is None
 
     @parametrize
-    def test_streaming_response_delete_order(self, client: Petstore) -> None:
+    def test_streaming_response_delete_order(self, client: Msai) -> None:
         with client.store.order.with_streaming_response.delete_order(
             0,
         ) as response:
@@ -84,14 +84,14 @@ class TestAsyncOrder:
     parametrize = pytest.mark.parametrize("async_client", [False, True], indirect=True, ids=["loose", "strict"])
 
     @parametrize
-    async def test_method_retrieve(self, async_client: AsyncPetstore) -> None:
+    async def test_method_retrieve(self, async_client: AsyncMsai) -> None:
         order = await async_client.store.order.retrieve(
             0,
         )
         assert_matches_type(Order, order, path=["response"])
 
     @parametrize
-    async def test_raw_response_retrieve(self, async_client: AsyncPetstore) -> None:
+    async def test_raw_response_retrieve(self, async_client: AsyncMsai) -> None:
         response = await async_client.store.order.with_raw_response.retrieve(
             0,
         )
@@ -102,7 +102,7 @@ class TestAsyncOrder:
         assert_matches_type(Order, order, path=["response"])
 
     @parametrize
-    async def test_streaming_response_retrieve(self, async_client: AsyncPetstore) -> None:
+    async def test_streaming_response_retrieve(self, async_client: AsyncMsai) -> None:
         async with async_client.store.order.with_streaming_response.retrieve(
             0,
         ) as response:
@@ -115,14 +115,14 @@ class TestAsyncOrder:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    async def test_method_delete_order(self, async_client: AsyncPetstore) -> None:
+    async def test_method_delete_order(self, async_client: AsyncMsai) -> None:
         order = await async_client.store.order.delete_order(
             0,
         )
         assert order is None
 
     @parametrize
-    async def test_raw_response_delete_order(self, async_client: AsyncPetstore) -> None:
+    async def test_raw_response_delete_order(self, async_client: AsyncMsai) -> None:
         response = await async_client.store.order.with_raw_response.delete_order(
             0,
         )
@@ -133,7 +133,7 @@ class TestAsyncOrder:
         assert order is None
 
     @parametrize
-    async def test_streaming_response_delete_order(self, async_client: AsyncPetstore) -> None:
+    async def test_streaming_response_delete_order(self, async_client: AsyncMsai) -> None:
         async with async_client.store.order.with_streaming_response.delete_order(
             0,
         ) as response:
